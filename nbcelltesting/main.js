@@ -56,28 +56,25 @@ define([
     };
 
 
-    var create_button_save = function(div, cell, celltoolbar) {
-        var save = document.createElement("input");
-        save.type = 'button';
-        save.name = 'save';
-        save.value = 'Save Output';
-        save.onclick = function() {
-            save_desired_output(cell);
+    var create_button = function(name, value, callback) {
+        return function(div, cell, celltoolbar) {
+            var button = document.createElement("input");
+            button.type = 'button';
+            button.name = name;
+            button.value = value;
+            button.onclick = function() {
+                callback(cell);
+            };
+            $(div).addClass('button-' + name + '-container').append(button);
         };
-        $(div).addClass('button-save-container').append(save);
     };
 
 
-    var create_button_reset = function(div, cell, celltoolbar) {
-        var reset = document.createElement("input");
-        reset.type = 'button';
-        reset.name = 'reset';
-        reset.value = 'Reset Output';
-        reset.onclick = function() {
-            reset_desired_output(cell);
-        };
-        $(div).addClass('button-reset-container').append(reset);
-    };
+    var create_button_save = create_button('save', 'Save Output',
+                                           save_desired_output);
+
+    var create_button_reset = create_button('reset', 'Reset Output',
+                                            reset_desired_output);
   
 
     var load_css = function () {
