@@ -9,10 +9,6 @@ define([
 ], function (require, $, Jupyter, dialog, celltoolbar, events) {
 
     var preset_name = 'Cell Testing';
-    var test_passed = 'passed';
-    var test_failed = 'failed';
-    var test_not_available = 'n/a';
-    var test_pending = '*';
 
     var CellToolbar = celltoolbar.CellToolbar;
 
@@ -126,20 +122,29 @@ define([
 
     var test_output = function(cell) {
         prepare_data(cell);
+        var result;
+        var cls;
         if (cell.nbcelltesting_data.pending === true) {
             console.log('pending');
-            result = test_pending;
+            result = '*';
+            cls = 'result_test_pending';
         } else {
             comparison_result = compare_output(cell);
             if (comparison_result === null) {
-                result = test_not_available;
+                result = 'n/a';
+                cls = 'result_test_not_available';
             } else if (comparison_result === false) {
-                result = test_failed;
+                result = 'failed';
+                cls = 'result_test_failed';
             } else if (comparison_result === true) {
-                result = test_passed;
+                result = 'passed';
+                cls = 'result_test_passed';
             }
         }
-        cell.nbcelltesting_data.result_test = result;
+        var result_test = $('<a />').addClass('result_test').addClass(cls);
+        result_test.append(result);
+
+        cell.nbcelltesting_data.result_test = result_test;
     };
 
 
@@ -153,9 +158,9 @@ define([
 
 
     var create_result_test = function(div, cell, celltoolbar) {
-        var result = $('<a />').addClass('result_test')
-        result.append(result_test(cell));
-        $(div).addClass('button_container_result_test').append(result);
+        $(div).addClass('button_container_result_test')
+            .append($('<a />').addClass('result_test_text').append('cell testing '))
+            .append(result_test(cell));
     };
 
 
