@@ -8,9 +8,41 @@ define([
 
 ], function (require, $, Jupyter, dialog, celltoolbar, events) {
 
-    var preset_name = "Cell Testing";
+    var preset_name = 'Cell Testing';
+    var test_passed = 'passed';
+    var test_failed = 'failed';
+    var test_not_available = 'n/a';
+    var test_pending = '*';
 
     var CellToolbar = celltoolbar.CellToolbar;
+
+
+    var prepare_data = function(cell) {
+        if (cell.nbcelltesting_data === undefined) {
+            cell.nbcelltesting_data = {};
+        }
+        if (cell.nbcelltesting_data.pending === undefined) {
+            cell.nbcelltesting_data.pending = false;
+        }
+    };
+
+
+    events.on('execute.CodeCell', function(event, data) {
+        cell = data.cell;
+        prepare_data(cell);
+        cell.nbcelltesting_data.pending = true;
+        delete cell.nbcelltesting_data.result_test;
+        cell.celltoolbar.rebuild();
+    });
+
+
+    events.on('finished_execute.CodeCell', function(event, data) {
+        cell = data.cell;
+        prepare_data(cell);
+        cell.nbcelltesting_data.pending = false;
+        test_output(cell);
+        cell.celltoolbar.rebuild();
+    });
 
 
     var prepare_metadata = function(cell) {
@@ -40,6 +72,15 @@ define([
     };
 
 
+    var desired_output = function(cell) {
+        if (cell.metadata.nbcelltesting !== undefined &&
+            cell.metadata.nbcelltesting.desired_output !== undefined) {
+            return cell.metadata.nbcelltesting.desired_output;
+        }
+        return null;
+    };
+
+
     var reset_desired_output = function(cell) {
         if (cell.metadata.nbcelltesting !== undefined &&
             cell.metadata.nbcelltesting.hasOwnProperty("desired_output")) {
@@ -49,7 +90,7 @@ define([
     };
 
 
-    var edit_cell_testing_metadata = function(cell) {
+    var edit_nbcelltesting_metadata = function(cell, celltoolbar=null) {
         if (cell.metadata.nbcelltesting === undefined) {
             metadata = {};
         } else {
@@ -62,6 +103,10 @@ define([
             callback: function (md) {
                 prepare_metadata(cell);
                 cell.metadata.nbcelltesting = md;
+                test_output(cell);
+                if (celltoolbar !== null) {
+                    celltoolbar.rebuild();
+                }
             },
             name: 'Cell Testing',
             notebook: notebook,
@@ -69,10 +114,48 @@ define([
     };
 
 
+    var compare_output = function(cell) {
+        dout = desired_output(cell);
+        if (dout === null) {
+            return null;
+        }
+        cout = cell_output(cell);
+        return cout === dout;
+    };
+
+
+    var test_output = function(cell) {
+        prepare_data(cell);
+        if (cell.nbcelltesting_data.pending === true) {
+            console.log('pending');
+            result = test_pending;
+        } else {
+            comparison_result = compare_output(cell);
+            if (comparison_result === null) {
+                result = test_not_available;
+            } else if (comparison_result === false) {
+                result = test_failed;
+            } else if (comparison_result === true) {
+                result = test_passed;
+            }
+        }
+        cell.nbcelltesting_data.result_test = result;
+    };
+
+
+    var result_test = function(cell) {
+        if (cell.nbcelltesting_data === undefined ||
+            cell.nbcelltesting_data.result_test === undefined) {
+            test_output(cell);
+        }
+        return cell.nbcelltesting_data.result_test;
+    };
+
+
     var create_result_test = function(div, cell, celltoolbar) {
-        var result = $('<a />').addClass('result-test')
-        result.append('x');
-        $(div).addClass('result-test-container').append(result);
+        var result = $('<a />').addClass('result_test')
+        result.append(result_test(cell));
+        $(div).addClass('button_container_result_test').append(result);
     };
 
 
@@ -83,21 +166,52 @@ define([
             button.name = name;
             button.value = value;
             button.onclick = function() {
-                callback(cell);
+                callback(div, cell, celltoolbar);
             };
-            $(div).addClass('button-' + name + '-container').append(button);
+            $(div).addClass('button_container_' + name).append(button);
         };
     };
 
 
+    var on_save_desired_output = function(div, cell, celltoolbar) {
+        save_desired_output(cell);
+        test_output(cell);
+        celltoolbar.rebuild();
+    };
+
+
     var create_button_save = create_button('save', 'Save Output',
-                                           save_desired_output);
+                                           on_save_desired_output);
+
+
+    var on_reset_desired_output = function(div, cell, celltoolbar) {
+        reset_desired_output(cell);
+        test_output(cell);
+        celltoolbar.rebuild();
+    };
+
 
     var create_button_reset = create_button('reset', 'Reset Output',
-                                            reset_desired_output);
+                                            on_reset_desired_output);
   
+
+    var on_edit_nbcelltesting_metadata = function(div, cell, celltoolbar) {
+        edit_nbcelltesting_metadata(cell, celltoolbar);
+    };
+
+
     var create_button_edit = create_button('edit', 'Edit Output',
-                                            edit_cell_testing_metadata);
+                                           on_edit_nbcelltesting_metadata);
+
+
+    var on_test_output = function(div, cell, celltoolbar) {
+        test_output(cell);
+        celltoolbar.rebuild();
+    };
+
+
+    var create_button_test = create_button('test', 'Test Output',
+                                           on_test_output);
 
 
     var load_css = function () {
@@ -116,12 +230,14 @@ define([
         CellToolbar.register_callback('nbcelltesting.button_save', create_button_save);
         CellToolbar.register_callback('nbcelltesting.button_reset', create_button_reset);
         CellToolbar.register_callback('nbcelltesting.button_edit', create_button_edit);
+        CellToolbar.register_callback('nbcelltesting.button_test', create_button_test);
 
         var preset = [
             'nbcelltesting.result_test',
             'nbcelltesting.button_save',
             'nbcelltesting.button_reset',
             'nbcelltesting.button_edit',
+            'nbcelltesting.button_test',
         ];
         CellToolbar.register_preset(preset_name, preset, Jupyter.notebook);
         console.log('nbcelltesting extension loaded.');
