@@ -1,3 +1,8 @@
+.result-label {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+}
+
 
 .button_container_result_test {
     float: left;
