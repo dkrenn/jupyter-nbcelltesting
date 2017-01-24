@@ -133,10 +133,10 @@ define([
                 result = 'no output saved';
                 cls = 'label-info';
             } else if (comparison_result === false) {
-                result = 'test failed';
+                result = 'wrong output';
                 cls = 'label-danger';
             } else if (comparison_result === true) {
-                result = 'test passed';
+                result = 'correct output';
                 cls = 'label-success';
             }
         }
