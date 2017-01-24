@@ -179,25 +179,25 @@ define([
     };
 
 
-    var actions = [{name:"Save", callback: on_save_desired_output},
-                   {name:"Reset", callback: on_reset_desired_output},
-                   {name:"Edit", callback: edit_nbcelltesting_metadata},
-                   {name:"Test", callback: on_test_output}];
+    var actions = [{name: 'Reset Output', callback: on_reset_desired_output},
+                   {name: 'Edit Output', callback: on_edit_nbcelltesting_metadata},
+                   {name: 'Test Output', callback: on_test_output}];
+
 
     var dropdown_factory = function(div, cell, celltoolbar) {
-        var dropdownButton = $("<button/>").addClass("btn btn-default btn-xs dropdown-toggle")
-            .prop('type', 'button').attr("data-toggle", "dropdown")
-            .html("cell testing <span class='caret'></span>");
+        var dropdownButton = $('<button/>').addClass('btn btn-default btn-xs dropdown-toggle')
+            .prop('type', 'button').attr('data-toggle', 'dropdown')
+            .html('<span class="caret"></span>');
 
-        var options = $("<ul/>").addClass("dropdown-menu");
+        var options = $('<ul/>').addClass('dropdown-menu');
 
         for (let action of actions) {
-            var action_link = $("<a/>").prop("href", "#").html(action.name);
+            var action_link = $('<a/>').prop('href', '#').html(action.name);
             action_link.on('click', function() { action.callback(cell, celltoolbar) });
-            options.append($("<li/>").append(action_link));
+            options.append($('<li/>').append(action_link));
         }
 
-        $(div).addClass("dropdown").append(dropdownButton).append(options);
+        $(div).addClass('ctb-thing dropdown').append(dropdownButton).append(options);
     };
 
 
