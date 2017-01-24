@@ -1,7 +1,8 @@
 jupyter-nbcelltesting
 =====================
 
-An extension for testing cells in Jupyter notebooks.
+An extension for testing whether the output of a cell in a Jupyter notebook has changed
+(meaning if it is different from a previously saved desired output).
 
 Installation
 ------------
