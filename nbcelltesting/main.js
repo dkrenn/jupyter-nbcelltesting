@@ -130,36 +130,34 @@ define([
         } else {
             comparison_result = compare_output(cell);
             if (comparison_result === null) {
-                result = 'n/a';
+                result = 'no output saved';
                 cls = 'label-info';
             } else if (comparison_result === false) {
-                result = 'failed';
+                result = 'test failed';
                 cls = 'label-danger';
             } else if (comparison_result === true) {
-                result = 'passed';
+                result = 'test passed';
                 cls = 'label-success';
             }
         }
         var result_test = $('<span />').addClass('label result-label').addClass(cls);
-        result_test.append("test status: " + result);
+        result_test.append(result);
 
         cell.nbcelltesting_data.result_test = result_test;
     };
 
 
-    var result_test = function(cell) {
+    var create_result_test = function(div, cell, celltoolbar) {
         if (cell.nbcelltesting_data === undefined ||
             cell.nbcelltesting_data.result_test === undefined) {
             test_output(cell);
         }
-        return cell.nbcelltesting_data.result_test;
+
+        $(div).addClass('ctb-thing result-test')
+            .append(cell.nbcelltesting_data.result_test);
     };
 
 
-    var create_result_test = function(div, cell, celltoolbar) {
-        $(div).addClass('button_container_result_test')
-            .append($('<a />').addClass('result_test_text'))
-            .append(result_test(cell));
     };
 
     var on_save_desired_output = function(cell, celltoolbar) {
