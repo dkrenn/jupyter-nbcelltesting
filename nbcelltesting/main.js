@@ -158,7 +158,18 @@ define([
     };
 
 
+    var create_button = function(name, value, callback) {
+        return function(div, cell, celltoolbar) {
+            var button = $('<button/>').addClass('btn btn-default btn-xs')
+                .addClass('button-' + name)
+                .prop('type', 'button')
+                .html(value);
+            button.name = name;
+            button.on('click', function() { callback(cell, celltoolbar) });
+            $(div).addClass('ctb-thing').append(button);
+        };
     };
+
 
     var on_save_desired_output = function(cell, celltoolbar) {
         save_desired_output(cell);
@@ -166,11 +177,19 @@ define([
         celltoolbar.rebuild();
     };
 
+
+    var create_button_save = create_button('save', 'Save Output',
+                                           on_save_desired_output);
+
+
     var on_reset_desired_output = function(cell, celltoolbar) {
         reset_desired_output(cell);
         test_output(cell);
         celltoolbar.rebuild();
     };
+
+
+    var on_edit_nbcelltesting_metadata = edit_nbcelltesting_metadata;
 
 
     var on_test_output = function(cell, celltoolbar) {
@@ -215,10 +234,12 @@ define([
         load_css();
 
         CellToolbar.register_callback('nbcelltesting.result_test', create_result_test);
+        CellToolbar.register_callback('nbcelltesting.button_save', create_button_save);
         CellToolbar.register_callback('nbcelltesting.dropdown_menu', dropdown_factory);
 
         var preset = [
             'nbcelltesting.result_test',
+            'nbcelltesting.button_save',
             'nbcelltesting.dropdown_menu',
         ];
         CellToolbar.register_preset(preset_name, preset, Jupyter.notebook);
