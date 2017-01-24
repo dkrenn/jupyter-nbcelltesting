@@ -186,6 +186,10 @@ define([
                    {name:"Edit", callback: edit_nbcelltesting_metadata},
                    {name:"Test", callback: on_test_output}];
 
+    var action_callback = function(action, cell, celltoolbar) {
+	return function() { action.callback(cell, celltoolbar); }
+    }
+
     var dropdown_factory = function(div, cell, celltoolbar) {
         var dropdownButton = $("<button/>").addClass("btn btn-default btn-xs dropdown-toggle")
             .prop('type', 'button').attr("data-toggle", "dropdown")
@@ -193,9 +197,9 @@ define([
 
         var options = $("<ul/>").addClass("dropdown-menu");
 
-        for (let action of actions) {
+        for (var action of actions) {
             var action_link = $("<a/>").prop("href", "#").html(action.name);
-            action_link.on('click', function() { action.callback(cell, celltoolbar) });
+            action_link.on('click', action_callback(action, cell, celltoolbar));
             options.append($("<li/>").append(action_link));
         }
 
