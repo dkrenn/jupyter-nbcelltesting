@@ -1,29 +1,11 @@
 .result-label {
-    font-size: 1.2rem;
-    margin-right: 1rem;
+    font-size: 1rem;
 }
 
-
-.button_container_result_test {
-    float: left;
+.btn {
+    font-size: 1rem;
 }
 
-.result_test_text {
-    color: black;
-}
-
-.result_test_pending {
-    color: blue;
-}
-
-.result_test_not_available {
-    color: gray;
-}
-
-.result_test_failed {
-    color: red;
-}
-
-.result_test_passed {
-    color: green;
+.ctb-thing {
+    margin-left: 0.25rem;
 }
