@@ -125,24 +125,23 @@ define([
         var result;
         var cls;
         if (cell.nbcelltesting_data.pending === true) {
-            console.log('pending');
-            result = '*';
-            cls = 'result_test_pending';
+            result = "<span class='fa fa-spinner fa-spin'></span>";
+            cls = 'label-info';
         } else {
             comparison_result = compare_output(cell);
             if (comparison_result === null) {
                 result = 'n/a';
-                cls = 'result_test_not_available';
+                cls = 'label-info';
             } else if (comparison_result === false) {
                 result = 'failed';
-                cls = 'result_test_failed';
+                cls = 'label-danger';
             } else if (comparison_result === true) {
                 result = 'passed';
-                cls = 'result_test_passed';
+                cls = 'label-success';
             }
         }
-        var result_test = $('<a />').addClass('result_test').addClass(cls);
-        result_test.append(result);
+        var result_test = $('<span />').addClass('label result-label').addClass(cls);
+        result_test.append("test status: " + result);
 
         cell.nbcelltesting_data.result_test = result_test;
     };
@@ -159,7 +158,7 @@ define([
 
     var create_result_test = function(div, cell, celltoolbar) {
         $(div).addClass('button_container_result_test')
-            .append($('<a />').addClass('result_test_text').append('cell testing '))
+            .append($('<a />').addClass('result_test_text'))
             .append(result_test(cell));
     };
 
