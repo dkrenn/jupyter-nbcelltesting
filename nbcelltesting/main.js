@@ -162,60 +162,46 @@ define([
             .append(result_test(cell));
     };
 
-
-    var create_button = function(name, value, callback) {
-        return function(div, cell, celltoolbar) {
-            var button = document.createElement("input");
-            button.type = 'button';
-            button.name = name;
-            button.value = value;
-            button.onclick = function() {
-                callback(div, cell, celltoolbar);
-            };
-            $(div).addClass('button_container_' + name).append(button);
-        };
-    };
-
-
-    var on_save_desired_output = function(div, cell, celltoolbar) {
+    var on_save_desired_output = function(cell, celltoolbar) {
         save_desired_output(cell);
         test_output(cell);
         celltoolbar.rebuild();
     };
 
-
-    var create_button_save = create_button('save', 'Save Output',
-                                           on_save_desired_output);
-
-
-    var on_reset_desired_output = function(div, cell, celltoolbar) {
+    var on_reset_desired_output = function(cell, celltoolbar) {
         reset_desired_output(cell);
         test_output(cell);
         celltoolbar.rebuild();
     };
 
 
-    var create_button_reset = create_button('reset', 'Reset Output',
-                                            on_reset_desired_output);
-  
-
-    var on_edit_nbcelltesting_metadata = function(div, cell, celltoolbar) {
-        edit_nbcelltesting_metadata(cell, celltoolbar);
-    };
-
-
-    var create_button_edit = create_button('edit', 'Edit Output',
-                                           on_edit_nbcelltesting_metadata);
-
-
-    var on_test_output = function(div, cell, celltoolbar) {
+    var on_test_output = function(cell, celltoolbar) {
         test_output(cell);
         celltoolbar.rebuild();
     };
 
 
-    var create_button_test = create_button('test', 'Test Output',
-                                           on_test_output);
+    var actions = [{name:"Save", callback: on_save_desired_output},
+                   {name:"Reset", callback: on_reset_desired_output},
+                   {name:"Edit", callback: edit_nbcelltesting_metadata},
+                   {name:"Test", callback: on_test_output}];
+
+    var dropdown_factory = function(div, cell, celltoolbar) {
+        var dropdownButton = $("<button/>").addClass("btn btn-default btn-xs dropdown-toggle")
+            .prop('type', 'button').attr("data-toggle", "dropdown")
+            .html("cell testing <span class='caret'></span>");
+
+        var options = $("<ul/>").addClass("dropdown-menu");
+
+        for (let action of actions) {
+            var action_link = $("<a/>").prop("href", "#").html(action.name);
+            action_link.on('click', function() { action.callback(cell, celltoolbar) });
+            options.append($("<li/>").append(action_link));
+        }
+
+        $(div).addClass("dropdown").append(dropdownButton).append(options);
+    };
+
 
 
     var load_css = function () {
@@ -231,17 +217,11 @@ define([
         load_css();
 
         CellToolbar.register_callback('nbcelltesting.result_test', create_result_test);
-        CellToolbar.register_callback('nbcelltesting.button_save', create_button_save);
-        CellToolbar.register_callback('nbcelltesting.button_reset', create_button_reset);
-        CellToolbar.register_callback('nbcelltesting.button_edit', create_button_edit);
-        CellToolbar.register_callback('nbcelltesting.button_test', create_button_test);
+        CellToolbar.register_callback('nbcelltesting.dropdown_menu', dropdown_factory);
 
         var preset = [
             'nbcelltesting.result_test',
-            'nbcelltesting.button_save',
-            'nbcelltesting.button_reset',
-            'nbcelltesting.button_edit',
-            'nbcelltesting.button_test',
+            'nbcelltesting.dropdown_menu',
         ];
         CellToolbar.register_preset(preset_name, preset, Jupyter.notebook);
         console.log('nbcelltesting extension loaded.');
