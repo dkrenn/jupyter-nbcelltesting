@@ -120,28 +120,48 @@ define([
     };
 
 
-    var status_pending = 'pending';
-    var status_not_available = 'not available';
-    var status_passed = 'passed';
-    var status_failed = 'failed';
+    var status = {'pending': {'text': '<span class="fa fa-spinner fa-spin"></span>',
+                              'cls': 'label-info',
+                              'count': 0},
+                  'not_available': {'text': 'no output saved',
+                                    'cls': 'label-info',
+                                    'count': 0},
+                  'failed': {'text': 'wrong output',
+                             'cls': 'label-danger',
+                             'count': 0},
+                  'passed': {'text': 'correct output',
+                             'cls': 'label-success',
+                             'count': 0},
+                 };
+
 
     var test_output = function(cell) {
         prepare_data(cell);
         var result;
         var cls;
         if (cell.nbcelltesting_data.pending === true) {
-            result = status_pending;
+            result = 'pending';
         } else {
             comparison_result = compare_output(cell);
             if (comparison_result === null) {
-                result = status_not_available;
+                result = 'not_available';
             } else if (comparison_result === false) {
-                result = status_failed;
+                result = 'failed';
             } else if (comparison_result === true) {
-                result = status_passed;
+                result = 'passed';
             }
         }
-        cell.nbcelltesting_data.result_test = result;
+
+        if (cell.nbcelltesting_data.result_test !== undefined) {
+            if (cell.nbcelltesting_data.result_test != result) {
+                status[cell.nbcelltesting_data.result_test].count--;
+                cell.nbcelltesting_data.result_test = result;
+                status[result].count++;
+            }
+        } else {
+            cell.nbcelltesting_data.result_test = result;
+            status[result].count++;
+        }
     };
 
 
@@ -155,22 +175,10 @@ define([
 
 
     var create_result_test = function(div, cell, celltoolbar) {
-        var status = result_test(cell);
+        var cell_status = result_test(cell);
 
-        var result;
-        if (status === status_pending) {
-            result = "<span class='fa fa-spinner fa-spin'></span>";
-            cls = 'label-info';
-        } else if (status === status_not_available) {
-            result = 'no output saved';
-            cls = 'label-info';
-        } else if (status === status_failed) {
-            result = 'wrong output';
-            cls = 'label-danger';
-        } else if (status === status_passed) {
-            result = 'correct output';
-            cls = 'label-success';
-        }
+        var result = status[cell_status].text;
+        var cls = status[cell_status].cls;
 
         var element = $('<span />').addClass('label result-label').addClass(cls);
         element.append(result);
