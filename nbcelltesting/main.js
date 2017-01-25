@@ -120,41 +120,63 @@ define([
     };
 
 
+    var status_pending = 'pending';
+    var status_not_available = 'not available';
+    var status_passed = 'passed';
+    var status_failed = 'failed';
+
     var test_output = function(cell) {
         prepare_data(cell);
         var result;
         var cls;
         if (cell.nbcelltesting_data.pending === true) {
-            result = "<span class='fa fa-spinner fa-spin'></span>";
-            cls = 'label-info';
+            result = status_pending;
         } else {
             comparison_result = compare_output(cell);
             if (comparison_result === null) {
-                result = 'no output saved';
-                cls = 'label-info';
+                result = status_not_available;
             } else if (comparison_result === false) {
-                result = 'wrong output';
-                cls = 'label-danger';
+                result = status_failed;
             } else if (comparison_result === true) {
-                result = 'correct output';
-                cls = 'label-success';
+                result = status_passed;
             }
         }
-        var result_test = $('<span />').addClass('label result-label').addClass(cls);
-        result_test.append(result);
-
-        cell.nbcelltesting_data.result_test = result_test;
+        cell.nbcelltesting_data.result_test = result;
     };
 
 
-    var create_result_test = function(div, cell, celltoolbar) {
+    var result_test = function(cell) {
         if (cell.nbcelltesting_data === undefined ||
             cell.nbcelltesting_data.result_test === undefined) {
             test_output(cell);
         }
+        return cell.nbcelltesting_data.result_test;
+    };
+
+
+    var create_result_test = function(div, cell, celltoolbar) {
+        var status = result_test(cell);
+
+        var result;
+        if (status === status_pending) {
+            result = "<span class='fa fa-spinner fa-spin'></span>";
+            cls = 'label-info';
+        } else if (status === status_not_available) {
+            result = 'no output saved';
+            cls = 'label-info';
+        } else if (status === status_failed) {
+            result = 'wrong output';
+            cls = 'label-danger';
+        } else if (status === status_passed) {
+            result = 'correct output';
+            cls = 'label-success';
+        }
+
+        var element = $('<span />').addClass('label result-label').addClass(cls);
+        element.append(result);
 
         $(div).addClass('ctb-thing result-test')
-            .append(cell.nbcelltesting_data.result_test);
+            .append(element);
     };
 
 
