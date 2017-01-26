@@ -121,15 +121,19 @@ define([
 
 
     var status = {'pending': {'text': '<span class="fa fa-spinner fa-spin"></span>',
+                              'style': 'info',
                               'cls': 'label-info',
                               'count': 0},
                   'not_available': {'text': 'no output saved',
+                                    'style': 'info',
                                     'cls': 'label-info',
                                     'count': 0},
                   'failed': {'text': 'wrong output',
+                             'style': 'danger',
                              'cls': 'label-danger',
                              'count': 0},
                   'passed': {'text': 'correct output',
+                             'style': 'success',
                              'cls': 'label-success',
                              'count': 0},
                  };
@@ -253,21 +257,19 @@ define([
     };
 
 
-    var update_global_result = function() {
-        var n = status.passed.count + status.failed.count
-            + status.not_available.count + status.pending.count;
-        $('#nbcelltesting-global-result-passed')
-            .attr('style', 'width: ' + status.passed.count / n * 100 + '%');
-        $('#nbcelltesting-global-result-failed')
-            .attr('style', 'width: ' + status.failed.count / n * 100 + '%');
-        $('#nbcelltesting-global-result-not_available')
-            .attr('style', 'width: ' + status.not_available.count / n * 100 + '%');
-        $('#nbcelltesting-global-result-pending')
-            .attr('style', 'width: ' + status.pending.count / n * 100 + '%');
-    };
-
-
     var global_status = ['passed', 'pending', 'failed', 'not_available'];
+
+
+    var update_global_result = function() {
+        var n = 0;
+        for (var s of global_status) {
+            n += status[s].count;
+        }
+        for (var s of global_status) {
+            $('#nbcelltesting-global-result-' + s)
+                .attr('style', 'width: ' + status[s].count / n * 100 + '%');
+        }
+    };
 
 
     events.on('preset_activated.CellToolbar', function(event, preset) {
@@ -277,26 +279,13 @@ define([
                 var progress = $('<div/>')
                     .attr('id', 'nbcelltesting-global-result')
                     .addClass('progress')
-                progress.append(
-                    $('<div/>')
-                        .attr('id', 'nbcelltesting-global-result-passed')
-                        .addClass('progress-bar progress-bar-success')
-                        .attr('role', 'progressbar'));
-                progress.append(
-                    $('<div/>')
-                        .attr('id', 'nbcelltesting-global-result-info-pending')
-                        .addClass('progress-bar')
-                        .attr('role', 'progressbar'));
-                progress.append(
-                    $('<div/>')
-                        .attr('id', 'nbcelltesting-global-result-failed')
-                        .addClass('progress-bar progress-bar-danger')
-                        .attr('role', 'progressbar'));
-                progress.append(
-                    $('<div/>')
-                        .attr('id', 'nbcelltesting-global-result-not_available')
-                        .addClass('progress-bar progress-bar-info')
-                        .attr('role', 'progressbar'));
+                for (var s of global_status) {
+                    progress.append(
+                        $('<div/>')
+                            .attr('id', 'nbcelltesting-global-result-' + s)
+                            .addClass('progress-bar progress-bar-' + status[s].style)
+                            .attr('role', 'progressbar'));
+                }
                 $("#maintoolbar-container").append(progress);
             }
             update_global_result();
