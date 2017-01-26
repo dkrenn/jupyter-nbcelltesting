@@ -160,13 +160,10 @@ define([
 
         if (cell.nbcelltesting_data.result_test !== undefined) {
             if (cell.nbcelltesting_data.result_test != result) {
-                status[cell.nbcelltesting_data.result_test].count--;
                 cell.nbcelltesting_data.result_test = result;
-                status[result].count++;
             }
         } else {
             cell.nbcelltesting_data.result_test = result;
-            status[result].count++;
         }
     };
 
