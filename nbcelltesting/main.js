@@ -251,7 +251,7 @@ define([
                    {name: 'Test Output', callback: on_test_output}];
 
     var action_callback = function(action, cell, celltoolbar) {
-	return function() { action.callback(cell, celltoolbar); }
+        return function() { action.callback(cell, celltoolbar); }
     }
 
     var dropdown_factory = function(div, cell, celltoolbar) {
