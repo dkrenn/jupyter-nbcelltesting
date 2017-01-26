@@ -264,7 +264,8 @@ define([
 
     var update_global_result = function() {
         var n = 0;
-        for (var s of global_status) {
+        for (var s in status) {
+            status[s].count = $('.ct-status-' + s).length
             n += status[s].count;
         }
         for (var s of global_status) {
