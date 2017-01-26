@@ -23,6 +23,10 @@ define([
     };
 
 
+    events.on('delete.Cell', function(event, data) {
+        update_global_result();
+    });
+
     events.on('execute.CodeCell', function(event, data) {
         cell = data.cell;
         prepare_data(cell);
