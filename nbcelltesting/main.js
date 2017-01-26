@@ -29,6 +29,7 @@ define([
         cell.nbcelltesting_data.pending = true;
         delete cell.nbcelltesting_data.result_test;
         cell.celltoolbar.rebuild();
+        update_global_result();
     });
 
 
@@ -38,6 +39,7 @@ define([
         cell.nbcelltesting_data.pending = false;
         test_output(cell);
         cell.celltoolbar.rebuild();
+        update_global_result();
     });
 
 
@@ -209,6 +211,7 @@ define([
         save_desired_output(cell);
         test_output(cell);
         celltoolbar.rebuild();
+        update_global_result();
     };
 
 
@@ -220,6 +223,7 @@ define([
         reset_desired_output(cell);
         test_output(cell);
         celltoolbar.rebuild();
+        update_global_result();
     };
 
 
@@ -229,6 +233,7 @@ define([
     var on_test_output = function(cell, celltoolbar) {
         test_output(cell);
         celltoolbar.rebuild();
+        update_global_result();
     };
 
 
