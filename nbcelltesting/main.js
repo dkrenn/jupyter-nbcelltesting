@@ -4,13 +4,18 @@ define([
     'base/js/namespace',
     'base/js/dialog',
     'notebook/js/celltoolbar',
-    'base/js/events'
-
-], function (require, $, Jupyter, dialog, celltoolbar, events) {
+    'base/js/events',
+], function (require,
+             $,
+             Jupyter,
+             dialog,
+             notebook_celltoolbar,
+             events)
+       {
 
     var preset_name = 'Cell Testing';
 
-    var CellToolbar = celltoolbar.CellToolbar;
+    var CellToolbar = notebook_celltoolbar.CellToolbar;
 
 
     var prepare_data = function(cell) {
@@ -236,11 +241,17 @@ define([
     function load_extension(){
         load_css();
 
-        CellToolbar.register_callback('nbcelltesting.result_test', create_result_test);
-        CellToolbar.register_callback('nbcelltesting.button_save', create_button_save);
-        CellToolbar.register_callback('nbcelltesting.dropdown_menu', dropdown_factory);
+        CellToolbar.register_callback('nbcelltesting.result_test',
+                                      create_result_test,
+                                      ['code']);
+        CellToolbar.register_callback('nbcelltesting.button_save',
+                                      create_button_save,
+                                      ['code']);
+        CellToolbar.register_callback('nbcelltesting.dropdown_menu',
+                                      dropdown_factory,
+                                      ['code']);
 
-        var preset = [
+         var preset = [
             'nbcelltesting.result_test',
             'nbcelltesting.button_save',
             'nbcelltesting.dropdown_menu',
