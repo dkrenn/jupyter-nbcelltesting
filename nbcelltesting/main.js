@@ -10,8 +10,7 @@ define([
              Jupyter,
              dialog,
              notebook_celltoolbar,
-             events)
-       {
+             events) {
 
     var preset_name = 'Cell Testing';
 
@@ -69,9 +68,14 @@ define([
     };
 
 
-    var save_desired_output = function(cell) {
+    var _save_desired_output_ = function(cell, output) {
         prepare_metadata(cell);
-        cell.metadata.nbcelltesting.desired_output = cell_output(cell);
+        cell.metadata.nbcelltesting.desired_output = output;
+    };
+
+
+    var save_desired_output = function(cell) {
+        return _save_desired_output_(cell, cell_output(cell));
     };
 
 
@@ -114,6 +118,60 @@ define([
             name: 'Cell Testing',
             notebook: notebook,
             keyboard_manager: notebook.keyboard_manager});
+    };
+
+
+    var edit_desired_output = function(cell, celltoolbar=null) {
+        var output = desired_output(cell);
+        var notebook = Jupyter.notebook
+        var error_div = $('<div/>').css('color', 'red');
+        var message = 'desired output';
+
+        var textarea = $('<textarea/>')
+            .attr('rows', '13')
+            .attr('cols', '80')
+            .attr('name', 'desired-output')
+            .text(output);
+
+        var dialogform = $('<div/>').attr('title', 'Edit Desired Output')
+            .append(
+                $('<form/>').append(
+                    $('<fieldset/>').append(
+                        $('<label/>')
+                        .attr('for','desired-output')
+                        .text(message)
+                        )
+                        .append(error_div)
+                        .append($('<br/>'))
+                        .append(textarea)
+                    )
+            );
+
+        var editor = CodeMirror.fromTextArea(textarea[0], {
+            lineNumbers: true,
+            matchBrackets: true,
+            indentUnit: 2,
+            autoIndent: true,
+            mode: 'text/plain',
+        });
+
+        var modal_obj = dialog.modal({
+            title: 'Edit Desired Output',
+            body: dialogform,
+            buttons: {
+                OK: { class : "btn-primary",
+                    click: function() {
+                        var new_output = editor.getValue();
+                        _save_desired_output_(cell, new_output);
+                    }
+                },
+                Cancel: {}
+            },
+            notebook: notebook,
+            keyboard_manager: notebook.keyboard_manager,
+        });
+
+        modal_obj.on('shown.bs.modal', function(){ editor.refresh(); });
     };
 
 
@@ -236,6 +294,9 @@ define([
     var on_edit_nbcelltesting_metadata = edit_nbcelltesting_metadata;
 
 
+    var on_edit_desired_output = edit_desired_output;
+
+
     var on_test_output = function(cell, celltoolbar) {
         test_output(cell);
         celltoolbar.rebuild();
@@ -244,7 +305,8 @@ define([
 
 
     var actions = [{name: 'Reset Output', callback: on_reset_desired_output},
-                   {name: 'Edit Output', callback: on_edit_nbcelltesting_metadata},
+                   {name: 'Edit Output', callback: on_edit_desired_output},
+                   {name: 'Edit Metadata', callback: on_edit_nbcelltesting_metadata},
                    {name: 'Test Output', callback: on_test_output}];
 
     var action_callback = function(action, cell, celltoolbar) {
