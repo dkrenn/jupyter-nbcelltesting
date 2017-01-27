@@ -22,3 +22,32 @@
     margin-bottom: 0px;
     margin-left: 5px;
 }
+
+.ct-diff {
+    margin-right: 2px;
+    margin-left: 2px;
+    color: #d9534f;
+}
+
+.ct-diff:hover {
+    color: #d43f3a;
+    cursor: pointer;
+}
+
+.ct-diff-output {
+    font-size: 2rem;
+}
+
+.ct-diff-output-added {
+    color: #00AC00;
+    background-color: #9FFFA5;
+}
+.ct-diff-output-removed {
+    color: #FF0000;
+    background-color: #FFBAB5;
+}
+.ct-diff-output-common {
+    color: #808080;
+    background-color: #F5F5F5;
+}
+
