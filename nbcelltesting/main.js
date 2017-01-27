@@ -261,7 +261,7 @@ define([
         diff.forEach(function(part) {
             var colorstyle = part.added ? 'added' : (part.removed ? 'removed' : 'common');
             modal_body.append($('<span/>').addClass('ct-diff-output-' + colorstyle)
-                              .html(part.value));
+                              .html(part.value.replace(/\n/g, '<br/>')));
         })
 
         var notebook = Jupyter.notebook;
