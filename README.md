@@ -18,9 +18,9 @@ installed with the help of `npm`:
 Afterwards, the extension has to be installed an enabled for your jupyter-notebook.
 To do so, you have two options:
 
-1. Automatically via our `install-nbextension` script for `npm` by calling
+1. Automatically via our `install-nbcelltesting` script for `npm` by calling
   ```
-   $ npm run install-nbextension
+   $ npm run install-nbcelltesting
   ```
   Note that when following this approach, you can configure the level to which the
   extension should be installed with the environment variable `$PYFLAG`, which can
@@ -31,9 +31,10 @@ To do so, you have two options:
   - `--symlink` to symlink this extension instead of copying the files
   - `--debug` for more-verbose output
 
-  For example,
+  The `npm` script passes `$PYFLAG` then to the calls to `jupyter-nbextension install`
+  and `jupyter-nbextension enable`, as explained below. For example,
   ```
-   $ PYFLAG=--user npm run install-nbextension
+   $ PYFLAG=--user npm run install-nbcelltesting
   ```
   installs the extension into the user's home Jupyter directory.
 

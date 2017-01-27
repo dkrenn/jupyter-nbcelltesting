@@ -7,7 +7,7 @@
   },
   "devDependencies": {},
     "scripts": {
-      "install-nbextension": "jupyter-nbextension install ./nbcelltesting $PYFLAG && jupyter-nbextension enable nbcelltesting/main $PYFLAG && jupyter-nbextension enable nbcelltesting/resources/diff.min $PYFLAG",
+      "install-nbcelltesting": "jupyter-nbextension install ./nbcelltesting $PYFLAG && jupyter-nbextension enable nbcelltesting/main $PYFLAG && jupyter-nbextension enable nbcelltesting/resources/diff.min $PYFLAG",
       "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
