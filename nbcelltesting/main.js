@@ -27,9 +27,11 @@ define([
         update_global_result();
     });
 
+
     events.on('create.Cell', function(event, data) {
         update_global_result();
     });
+
 
     events.on('execute.CodeCell', function(event, data) {
         cell = data.cell;
