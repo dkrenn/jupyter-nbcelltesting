@@ -172,13 +172,7 @@ define([
             }
         }
 
-        if (cell.nbcelltesting_data.result_test !== undefined) {
-            if (cell.nbcelltesting_data.result_test != result) {
-                cell.nbcelltesting_data.result_test = result;
-            }
-        } else {
-            cell.nbcelltesting_data.result_test = result;
-        }
+        cell.nbcelltesting_data.result_test = result;
     };
 
 
