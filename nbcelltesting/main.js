@@ -255,8 +255,8 @@ define([
     };
 
     var diff_wrong_output = function(cell, celltoolbar=null) {
-        var diff = JsDiff.diffChars(cell_output(cell), desired_output(cell));
         var modal_body = $('<div/>').addClass('ct-diff-output');
+        var diff = JsDiff.diffChars(desired_output(cell), cell_output(cell));
 
         diff.forEach(function(part) {
             var colorstyle = part.added ? 'added' : (part.removed ? 'removed' : 'common');
@@ -267,7 +267,7 @@ define([
         var notebook = Jupyter.notebook;
 
         var modal_obj = dialog.modal({
-            title: 'Comparison: output vs. desired output',
+            title: 'Comparison: Desired Output vs. Current Output',
             body: modal_body,
             buttons: {
                 OK: { class : "btn-primary" }
