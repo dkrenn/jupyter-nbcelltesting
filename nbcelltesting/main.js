@@ -254,10 +254,11 @@ define([
         return cell.nbcelltesting_data.result_test;
     };
 
+
     var diff_wrong_output = function(cell, celltoolbar=null) {
-        var modal_body = $('<div/>').addClass('ct-diff-output');
         var diff = JsDiff.diffChars(desired_output(cell), cell_output(cell));
 
+        var modal_body = $('<div/>').addClass('ct-diff-output');
         diff.forEach(function(part) {
             var colorstyle = part.added ? 'added' : (part.removed ? 'removed' : 'common');
             modal_body.append($('<span/>').addClass('ct-diff-output-' + colorstyle)
@@ -270,12 +271,13 @@ define([
             title: 'Comparison: Desired Output vs. Current Output',
             body: modal_body,
             buttons: {
-                OK: { class : "btn-primary" }
+                OK: {class: 'btn-primary'}
             },
             notebook: notebook,
             keyboard_manager: notebook.keyboard_manager,
         });
     };
+
 
     var create_result_test = function(div, cell, celltoolbar) {
         var cell_status = result_test(cell);
