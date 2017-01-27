@@ -9,3 +9,16 @@
 .ctb-thing {
     margin-left: 0.25rem;
 }
+
+#nbcelltesting-global-result {
+    width: 15rem;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    float: right;
+}
+
+#nbcelltesting-global-result.progress {
+    margin-bottom: 0px;
+    margin-left: 5px;
+}

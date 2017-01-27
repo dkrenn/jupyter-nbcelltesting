@@ -28,12 +28,23 @@ define([
     };
 
 
+    events.on('delete.Cell', function(event, data) {
+        update_global_result();
+    });
+
+
+    events.on('create.Cell', function(event, data) {
+        update_global_result();
+    });
+
+
     events.on('execute.CodeCell', function(event, data) {
         cell = data.cell;
         prepare_data(cell);
         cell.nbcelltesting_data.pending = true;
         delete cell.nbcelltesting_data.result_test;
         cell.celltoolbar.rebuild();
+        update_global_result();
     });
 
 
@@ -43,6 +54,7 @@ define([
         cell.nbcelltesting_data.pending = false;
         test_output(cell);
         cell.celltoolbar.rebuild();
+        update_global_result();
     });
 
 
@@ -125,41 +137,70 @@ define([
     };
 
 
+    var status = {'pending': {'text': '<span class="fa fa-spinner fa-spin"></span>',
+                              'style': 'info',
+                              'cls': 'label-info ct-status-pending',
+                              'count': 0,
+                              'title': 'Number of pending tests'},
+                  'not_available': {'text': 'no output saved',
+                                    'style': 'info',
+                                    'cls': 'label-info ct-status-not_available',
+                                    'count': 0,
+                                    'title': 'Number of cells without saved output'},
+                  'failed': {'text': 'wrong output',
+                             'style': 'danger',
+                             'cls': 'label-danger ct-status-failed',
+                             'count': 0,
+                             'title': 'Number of cells with wrong output'},
+                  'passed': {'text': 'correct output',
+                             'style': 'success',
+                             'cls': 'label-success ct-status-passed',
+                             'count': 0,
+                             'title': 'Number of cells with correct output'},
+                 };
+
+
     var test_output = function(cell) {
         prepare_data(cell);
         var result;
         var cls;
         if (cell.nbcelltesting_data.pending === true) {
-            result = "<span class='fa fa-spinner fa-spin'></span>";
-            cls = 'label-info';
+            result = 'pending';
         } else {
             comparison_result = compare_output(cell);
             if (comparison_result === null) {
-                result = 'no output saved';
-                cls = 'label-info';
+                result = 'not_available';
             } else if (comparison_result === false) {
-                result = 'wrong output';
-                cls = 'label-danger';
+                result = 'failed';
             } else if (comparison_result === true) {
-                result = 'correct output';
-                cls = 'label-success';
+                result = 'passed';
             }
         }
-        var result_test = $('<span />').addClass('label result-label').addClass(cls);
-        result_test.append(result);
 
-        cell.nbcelltesting_data.result_test = result_test;
+        cell.nbcelltesting_data.result_test = result;
     };
 
 
-    var create_result_test = function(div, cell, celltoolbar) {
+    var result_test = function(cell) {
         if (cell.nbcelltesting_data === undefined ||
             cell.nbcelltesting_data.result_test === undefined) {
             test_output(cell);
         }
+        return cell.nbcelltesting_data.result_test;
+    };
+
+
+    var create_result_test = function(div, cell, celltoolbar) {
+        var cell_status = result_test(cell);
+
+        var result = status[cell_status].text;
+        var cls = status[cell_status].cls;
+
+        var element = $('<span />').addClass('label result-label').addClass(cls);
+        element.append(result);
 
         $(div).addClass('ctb-thing result-test')
-            .append(cell.nbcelltesting_data.result_test);
+            .append(element);
     };
 
 
@@ -180,6 +221,7 @@ define([
         save_desired_output(cell);
         test_output(cell);
         celltoolbar.rebuild();
+        update_global_result();
     };
 
 
@@ -191,6 +233,7 @@ define([
         reset_desired_output(cell);
         test_output(cell);
         celltoolbar.rebuild();
+        update_global_result();
     };
 
 
@@ -200,6 +243,7 @@ define([
     var on_test_output = function(cell, celltoolbar) {
         test_output(cell);
         celltoolbar.rebuild();
+        update_global_result();
     };
 
 
@@ -208,7 +252,7 @@ define([
                    {name: 'Test Output', callback: on_test_output}];
 
     var action_callback = function(action, cell, celltoolbar) {
-	return function() { action.callback(cell, celltoolbar); }
+        return function() { action.callback(cell, celltoolbar); }
     }
 
     var dropdown_factory = function(div, cell, celltoolbar) {
@@ -227,6 +271,48 @@ define([
         $(div).addClass('ctb-thing dropdown').append(dropdownButton).append(options);
     };
 
+
+    var global_status = ['passed', 'pending', 'failed', 'not_available'];
+
+
+    var update_global_result = function() {
+        var n = 0;
+        for (var s in status) {
+            status[s].count = $('.ct-status-' + s).length
+            n += status[s].count;
+        }
+        for (var s in status) {
+            $('#nbcelltesting-global-result-' + s)
+                .attr('style', 'width: ' + status[s].count / n * 100 + '%')
+                .html(status[s].count);
+        }
+    };
+
+
+    events.on('preset_activated.CellToolbar', function(event, preset) {
+        var element = $('#nbcelltesting-global-result');
+        if (preset.name === preset_name) {
+            if (element.length == 0) {
+                var progress = $('<div/>')
+                    .attr('id', 'nbcelltesting-global-result')
+                    .addClass('progress')
+                for (var s of global_status) {
+                    progress.append(
+                        $('<div/>')
+                            .attr('id', 'nbcelltesting-global-result-' + s)
+                            .addClass('progress-bar progress-bar-' + status[s].style)
+                            .attr('role', 'progressbar')
+                            .attr('title', status[s].title));
+                }
+                $("#maintoolbar-container").append(progress);
+            }
+            update_global_result();
+            element = progress;
+            element.show();
+        } else {
+            element.hide();
+        }
+    });
 
 
     var load_css = function () {
