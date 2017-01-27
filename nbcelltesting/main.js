@@ -37,6 +37,9 @@ define([
         update_global_result();
     });
 
+    events.on('selected_cell_type_changed.Notebook', function(event, data) {
+        update_global_result();
+    });
 
     events.on('execute.CodeCell', function(event, data) {
         cell = data.cell;
