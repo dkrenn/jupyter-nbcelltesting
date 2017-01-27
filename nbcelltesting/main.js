@@ -173,6 +173,9 @@ define([
                     click: function() {
                         var new_output = editor.getValue();
                         _save_desired_output_(cell, new_output);
+                        test_output(cell);
+                        celltoolbar.rebuild();
+                        update_global_result();
                     }
                 },
                 Cancel: {}
