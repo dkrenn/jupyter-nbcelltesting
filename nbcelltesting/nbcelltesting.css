@@ -35,7 +35,8 @@
 }
 
 .ct-diff-output {
-    font-size: 2rem;
+    //font-size: 2rem;
+    font-family: monospace;
 }
 
 .ct-diff-output-added {
