@@ -30,6 +30,7 @@ To do so, you have two options:
   - `--sys-prefix` to install into Python's `sys.prefix` (useful e.g. for virtualenvs)
   - `--symlink` to symlink this extension instead of copying the files
   - `--debug` for more-verbose output
+
   For example,
   ```
    $ PYFLAG=--user npm run install-nbextension
@@ -51,4 +52,4 @@ To do so, you have two options:
 After successfully installing the extension, fire up the notebook server (`jupyter-notebook`), open a file and
 select `Cell Testing` from the CellToolbar dropdown menu (`View > Cell Toolbar > Cell Testing`).
 
-Congratulations, you are now using the `celltesting`-Extension!
+Congratulations, you are now using the `celltesting`-extension!
