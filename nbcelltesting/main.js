@@ -5,12 +5,13 @@ define([
     'base/js/dialog',
     'notebook/js/celltoolbar',
     'base/js/events',
+    'nbextensions/nbcelltesting/resources/diff.min'
 ], function (require,
              $,
              Jupyter,
              dialog,
              notebook_celltoolbar,
-             events) {
+             events, JsDiff) {
 
     var preset_name = 'Cell Testing';
 
