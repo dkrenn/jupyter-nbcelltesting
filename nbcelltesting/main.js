@@ -84,7 +84,7 @@ define([
     };
 
 
-    var save_desired_output = function(cell) {
+    var save_current_output = function(cell) {
         return _save_desired_output_(cell, cell_output(cell));
     };
 
@@ -276,8 +276,8 @@ define([
     };
 
 
-    var on_save_desired_output = function(cell, celltoolbar) {
-        save_desired_output(cell);
+    var on_save_current_output = function(cell, celltoolbar) {
+        save_current_output(cell);
         test_output(cell);
         celltoolbar.rebuild();
         update_global_result();
@@ -285,7 +285,7 @@ define([
 
 
     var create_button_save = create_button('save', 'Save Output',
-                                           on_save_desired_output);
+                                           on_save_current_output);
 
 
     var on_reset_desired_output = function(cell, celltoolbar) {
