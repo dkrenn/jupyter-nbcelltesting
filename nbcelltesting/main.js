@@ -10,8 +10,7 @@ define([
              Jupyter,
              dialog,
              notebook_celltoolbar,
-             events)
-       {
+             events) {
 
     var preset_name = 'Cell Testing';
 
@@ -82,9 +81,14 @@ define([
     };
 
 
-    var save_desired_output = function(cell) {
+    var _save_desired_output_ = function(cell, output) {
         prepare_metadata(cell);
-        cell.metadata.nbcelltesting.desired_output = cell_output(cell);
+        cell.metadata.nbcelltesting.desired_output = output;
+    };
+
+
+    var save_current_output = function(cell) {
+        return _save_desired_output_(cell, cell_output(cell));
     };
 
 
@@ -127,6 +131,63 @@ define([
             name: 'Cell Testing',
             notebook: notebook,
             keyboard_manager: notebook.keyboard_manager});
+    };
+
+
+    var edit_desired_output = function(cell, celltoolbar=null) {
+        var output = desired_output(cell);
+        var notebook = Jupyter.notebook
+        var error_div = $('<div/>').css('color', 'red');
+        var message = 'Edit the desired output of the selected cell below.';
+
+        var textarea = $('<textarea/>')
+            .attr('rows', '13')
+            .attr('cols', '80')
+            .attr('name', 'desired-output')
+            .text(output);
+
+        var dialogform = $('<div/>').attr('title', 'Edit Desired Output')
+            .append(
+                $('<form/>').append(
+                    $('<fieldset/>').append(
+                        $('<label/>')
+                        .attr('for','desired-output')
+                        .text(message)
+                        )
+                        .append(error_div)
+                        .append($('<br/>'))
+                        .append(textarea)
+                    )
+            );
+
+        var editor = CodeMirror.fromTextArea(textarea[0], {
+            lineNumbers: true,
+            matchBrackets: true,
+            indentUnit: 2,
+            autoIndent: true,
+            mode: 'text/plain',
+        });
+
+        var modal_obj = dialog.modal({
+            title: 'Edit Desired Output',
+            body: dialogform,
+            buttons: {
+                OK: { class : "btn-primary",
+                    click: function() {
+                        var new_output = editor.getValue();
+                        _save_desired_output_(cell, new_output);
+                        test_output(cell);
+                        celltoolbar.rebuild();
+                        update_global_result();
+                    }
+                },
+                Cancel: {}
+            },
+            notebook: notebook,
+            keyboard_manager: notebook.keyboard_manager,
+        });
+
+        modal_obj.on('shown.bs.modal', function(){ editor.refresh(); });
     };
 
 
@@ -221,8 +282,8 @@ define([
     };
 
 
-    var on_save_desired_output = function(cell, celltoolbar) {
-        save_desired_output(cell);
+    var on_save_current_output = function(cell, celltoolbar) {
+        save_current_output(cell);
         test_output(cell);
         celltoolbar.rebuild();
         update_global_result();
@@ -230,7 +291,7 @@ define([
 
 
     var create_button_save = create_button('save', 'Save Output',
-                                           on_save_desired_output);
+                                           on_save_current_output);
 
 
     var on_reset_desired_output = function(cell, celltoolbar) {
@@ -244,6 +305,9 @@ define([
     var on_edit_nbcelltesting_metadata = edit_nbcelltesting_metadata;
 
 
+    var on_edit_desired_output = edit_desired_output;
+
+
     var on_test_output = function(cell, celltoolbar) {
         test_output(cell);
         celltoolbar.rebuild();
@@ -252,8 +316,10 @@ define([
 
 
     var actions = [{name: 'Reset Output', callback: on_reset_desired_output},
-                   {name: 'Edit Output', callback: on_edit_nbcelltesting_metadata},
-                   {name: 'Test Output', callback: on_test_output}];
+                   {name: 'Edit Output', callback: on_edit_desired_output},
+                   {name: 'Test Output', callback: on_test_output},
+                   {name: 'break'},
+                   {name: 'Edit Metadata', callback: on_edit_nbcelltesting_metadata}];
 
     var action_callback = function(action, cell, celltoolbar) {
         return function() { action.callback(cell, celltoolbar); }
@@ -267,6 +333,10 @@ define([
         var options = $('<ul/>').addClass('dropdown-menu');
 
         for (var action of actions) {
+            if (action.name === 'break') {
+                options.append($('<li/>').attr('role', 'separator').addClass('divider'));
+                continue;
+            }
             var action_link = $('<a/>').prop('href', '#').html(action.name);
             action_link.on('click', action_callback(action, cell, celltoolbar));
             options.append($('<li/>').append(action_link));
