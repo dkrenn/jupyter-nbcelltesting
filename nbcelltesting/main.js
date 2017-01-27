@@ -5,12 +5,13 @@ define([
     'base/js/dialog',
     'notebook/js/celltoolbar',
     'base/js/events',
+    'nbextensions/nbcelltesting/resources/diff.min'
 ], function (require,
              $,
              Jupyter,
              dialog,
              notebook_celltoolbar,
-             events) {
+             events, JsDiff) {
 
     var preset_name = 'Cell Testing';
 
@@ -254,6 +255,30 @@ define([
     };
 
 
+    var diff_wrong_output = function(cell, celltoolbar=null) {
+        var diff = JsDiff.diffChars(desired_output(cell), cell_output(cell));
+
+        var modal_body = $('<div/>').addClass('ct-diff-output');
+        diff.forEach(function(part) {
+            var colorstyle = part.added ? 'added' : (part.removed ? 'removed' : 'common');
+            modal_body.append($('<span/>').addClass('ct-diff-output-' + colorstyle)
+                              .html(part.value.replace(/\n/g, '<br/>')));
+        })
+
+        var notebook = Jupyter.notebook;
+
+        var modal_obj = dialog.modal({
+            title: 'Comparison: Desired Output vs. Current Output',
+            body: modal_body,
+            buttons: {
+                OK: {class: 'btn-primary'}
+            },
+            notebook: notebook,
+            keyboard_manager: notebook.keyboard_manager,
+        });
+    };
+
+
     var create_result_test = function(div, cell, celltoolbar) {
         var cell_status = result_test(cell);
 
@@ -266,6 +291,12 @@ define([
 
         $(div).addClass('ctb-thing result-test')
             .append(element);
+
+        if (cell_status === 'failed') {
+            var diffIcon = $('<span/>').addClass('fa fa-lg fa-question-circle ct-diff');
+            diffIcon.on('click', function() {diff_wrong_output(cell, celltoolbar);});
+            $(div).append(diffIcon)
+        }
     };
 
 
