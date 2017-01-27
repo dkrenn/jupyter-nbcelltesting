@@ -314,8 +314,9 @@ define([
 
     var actions = [{name: 'Reset Output', callback: on_reset_desired_output},
                    {name: 'Edit Output', callback: on_edit_desired_output},
-                   {name: 'Edit Metadata', callback: on_edit_nbcelltesting_metadata},
-                   {name: 'Test Output', callback: on_test_output}];
+                   {name: 'Test Output', callback: on_test_output},
+                   {name: 'break'},
+                   {name: 'Edit Metadata', callback: on_edit_nbcelltesting_metadata}];
 
     var action_callback = function(action, cell, celltoolbar) {
         return function() { action.callback(cell, celltoolbar); }
@@ -329,6 +330,10 @@ define([
         var options = $('<ul/>').addClass('dropdown-menu');
 
         for (var action of actions) {
+            if (action.name === 'break') {
+                options.append($('<li/>').attr('role', 'separator').addClass('divider'));
+                continue;
+            }
             var action_link = $('<a/>').prop('href', '#').html(action.name);
             action_link.on('click', action_callback(action, cell, celltoolbar));
             options.append($('<li/>').append(action_link));
