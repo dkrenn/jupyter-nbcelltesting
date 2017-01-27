@@ -18,10 +18,10 @@ installed with the help of `npm`:
 Afterwards, the extension has to be installed an enabled for your jupyter-notebook.
 To do so, you have two options:
 
-- Automatically via our `install-nbextension` script for `npm` by calling
-```
- $ npm run install-nbextension
-```
+1. Automatically via our `install-nbextension` script for `npm` by calling
+  ```
+   $ npm run install-nbextension
+  ```
   Note that when following this approach, you can configure the level to which the
   extension should be installed with the environment variable `$PYFLAG`, which can
   be set to
@@ -36,15 +36,15 @@ To do so, you have two options:
   ```
   installs the extension into the user's home Jupyter directory.
 
-- Manually via `jupyter-nbextension install / enable`. You have to install and
-  then enable the extension via
-  ```
-   $ jupyter-nbextension install path/to/nbcelltesting/
-   $ jupyter-nbextension enable nbcelltesting/main
-   $ jupyter-nbextension enable nbcelltesting/resources/diff.min
-  ```
-  See [the Jupyter notebook documentation](http://jupyter-notebook.readthedocs.io/en/latest/extending/frontend_extensions.html?highlight=nbextension#installing-and-enabling-extensions)
-  for more information.
+2. Manually via `jupyter-nbextension install / enable`. You have to install and
+   then enable the extension via
+   ```
+    $ jupyter-nbextension install path/to/nbcelltesting/
+    $ jupyter-nbextension enable nbcelltesting/main
+    $ jupyter-nbextension enable nbcelltesting/resources/diff.min
+   ```
+   See [the Jupyter notebook documentation](http://jupyter-notebook.readthedocs.io/en/latest/extending/frontend_extensions.html?highlight=nbextension#installing-and-enabling-extensions)
+   for more information.
 
 ## Using the extension
 
