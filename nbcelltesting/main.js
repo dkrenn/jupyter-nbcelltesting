@@ -198,6 +198,7 @@ define([
 
         var element = $('<span />').addClass('label result-label').addClass(cls);
         element.append(result);
+        element.on('click', function() { on_test_output(cell, celltoolbar); });
 
         $(div).addClass('ctb-thing result-test')
             .append(element);
