@@ -27,6 +27,16 @@ define([
     };
 
 
+    events.on('delete.Cell', function(event, data) {
+        update_global_result();
+    });
+
+
+    events.on('create.Cell', function(event, data) {
+        update_global_result();
+    });
+
+
     events.on('execute.CodeCell', function(event, data) {
         cell = data.cell;
         prepare_data(cell);
@@ -187,20 +197,24 @@ define([
 
     var status = {'pending': {'text': '<span class="fa fa-spinner fa-spin"></span>',
                               'style': 'info',
-                              'cls': 'label-info',
-                              'count': 0},
+                              'cls': 'label-info ct-status-pending',
+                              'count': 0,
+                              'title': 'Number of pending tests'},
                   'not_available': {'text': 'no output saved',
                                     'style': 'info',
-                                    'cls': 'label-info',
-                                    'count': 0},
+                                    'cls': 'label-info ct-status-not_available',
+                                    'count': 0,
+                                    'title': 'Number of cells without saved output'},
                   'failed': {'text': 'wrong output',
                              'style': 'danger',
-                             'cls': 'label-danger',
-                             'count': 0},
+                             'cls': 'label-danger ct-status-failed',
+                             'count': 0,
+                             'title': 'Number of cells with wrong output'},
                   'passed': {'text': 'correct output',
                              'style': 'success',
-                             'cls': 'label-success',
-                             'count': 0},
+                             'cls': 'label-success ct-status-passed',
+                             'count': 0,
+                             'title': 'Number of cells with correct output'},
                  };
 
 
@@ -221,16 +235,7 @@ define([
             }
         }
 
-        if (cell.nbcelltesting_data.result_test !== undefined) {
-            if (cell.nbcelltesting_data.result_test != result) {
-                status[cell.nbcelltesting_data.result_test].count--;
-                cell.nbcelltesting_data.result_test = result;
-                status[result].count++;
-            }
-        } else {
-            cell.nbcelltesting_data.result_test = result;
-            status[result].count++;
-        }
+        cell.nbcelltesting_data.result_test = result;
     };
 
 
@@ -310,7 +315,7 @@ define([
                    {name: 'Test Output', callback: on_test_output}];
 
     var action_callback = function(action, cell, celltoolbar) {
-	return function() { action.callback(cell, celltoolbar); }
+        return function() { action.callback(cell, celltoolbar); }
     }
 
     var dropdown_factory = function(div, cell, celltoolbar) {
@@ -335,12 +340,14 @@ define([
 
     var update_global_result = function() {
         var n = 0;
-        for (var s of global_status) {
+        for (var s in status) {
+            status[s].count = $('.ct-status-' + s).length
             n += status[s].count;
         }
-        for (var s of global_status) {
+        for (var s in status) {
             $('#nbcelltesting-global-result-' + s)
-                .attr('style', 'width: ' + status[s].count / n * 100 + '%');
+                .attr('style', 'width: ' + status[s].count / n * 100 + '%')
+                .html(status[s].count);
         }
     };
 
@@ -357,7 +364,8 @@ define([
                         $('<div/>')
                             .attr('id', 'nbcelltesting-global-result-' + s)
                             .addClass('progress-bar progress-bar-' + status[s].style)
-                            .attr('role', 'progressbar'));
+                            .attr('role', 'progressbar')
+                            .attr('title', status[s].title));
                 }
                 $("#maintoolbar-container").append(progress);
             }
