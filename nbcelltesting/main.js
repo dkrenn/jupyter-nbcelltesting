@@ -5,7 +5,7 @@ define([
     'base/js/dialog',
     'notebook/js/celltoolbar',
     'base/js/events',
-    'nbextensions/nbcelltesting/resources/diff.min'
+    './resources/diff.min'
 ], function (require,
              $,
              Jupyter,
