@@ -459,6 +459,7 @@ define([
     return {
         load_ipython_extension: load_extension,
         load_css: load_css,
+        create_button: create_button,
         create_global_result: create_global_result
     };
 });
