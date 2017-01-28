@@ -467,6 +467,11 @@ define([
         load_ipython_extension: load_extension,
         load_css: load_css,
         create_button: create_button,
-        create_global_result: create_global_result
+        create_global_result: create_global_result,
+        dropdown_factory: dropdown_factory,
+        on_reset_desired_output: on_reset_desired_output,
+        on_edit_desired_output: on_edit_desired_output,
+        on_test_output: on_test_output,
+        on_edit_nbcelltesting_metadata: on_edit_nbcelltesting_metadata
     };
 });
