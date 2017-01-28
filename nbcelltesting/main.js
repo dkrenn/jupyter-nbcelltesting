@@ -77,7 +77,7 @@ define([
 
 
     var cell_output = function(cell) {
-        pre = cell.output_area.element.find('div.output_subarea').last().find('pre');
+        var pre = cell.output_area.element.find('div.output_subarea').last().find('pre');
         return pre.text();
     };
 
