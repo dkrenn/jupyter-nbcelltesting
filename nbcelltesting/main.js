@@ -112,13 +112,12 @@ define([
 
 
     var edit_nbcelltesting_metadata = function(cell, celltoolbar=null) {
-        if (cell.metadata.nbcelltesting === undefined) {
-            metadata = {};
-        } else {
+        var metadata = {};
+        if (cell.metadata.nbcelltesting !== undefined) {
             metadata = cell.metadata.nbcelltesting;
         }
 
-        notebook = Jupyter.notebook
+        var notebook = Jupyter.notebook;
         dialog.edit_metadata({
             md: metadata,
             callback: function (md) {
@@ -193,11 +192,11 @@ define([
 
 
     var compare_output = function(cell) {
-        dout = desired_output(cell);
+        var dout = desired_output(cell);
         if (dout === null) {
             return null;
         }
-        cout = cell_output(cell);
+        var cout = cell_output(cell);
         return cout === dout;
     };
 
