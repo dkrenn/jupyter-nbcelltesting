@@ -136,6 +136,7 @@ define([
 
     var edit_desired_output = function(cell, celltoolbar=null) {
         var output = desired_output(cell);
+        if (output === null) { output = ''; }
         var notebook = Jupyter.notebook
         var error_div = $('<div/>').css('color', 'red');
         var message = 'Edit the desired output of the selected cell below.';
