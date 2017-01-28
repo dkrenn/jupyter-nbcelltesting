@@ -395,8 +395,13 @@ define([
 
 
     events.on('preset_activated.CellToolbar', function(event, preset) {
+        create_global_result(preset.name === preset_name);
+    });
+
+
+    var create_global_result = function(show=true) {
         var element = $('#nbcelltesting-global-result');
-        if (preset.name === preset_name) {
+        if (show) {
             if (element.length == 0) {
                 var progress = $('<div/>')
                     .attr('id', 'nbcelltesting-global-result')
@@ -417,7 +422,7 @@ define([
         } else {
             element.hide();
         }
-    });
+    };
 
 
     var load_css = function () {
