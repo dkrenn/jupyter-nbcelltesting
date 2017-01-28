@@ -351,11 +351,14 @@ define([
                    {name: 'break'},
                    {name: 'Edit Metadata', callback: on_edit_nbcelltesting_metadata}];
 
+
     var action_callback = function(action, cell, celltoolbar) {
         return function() { action.callback(cell, celltoolbar); }
     }
 
-    var dropdown_factory = function(div, cell, celltoolbar) {
+
+    var dropdown_factory = function(actions) {
+        return function(div, cell, celltoolbar) {
         var dropdownButton = $('<button/>').addClass('btn btn-default btn-xs dropdown-toggle')
             .prop('type', 'button').attr('data-toggle', 'dropdown')
             .html('<span class="caret"></span>');
@@ -373,7 +376,11 @@ define([
         }
 
         $(div).addClass('ctb-thing dropdown').append(dropdownButton).append(options);
+        };
     };
+
+
+    var create_dropdown_menu = dropdown_factory(actions);
 
 
     var global_status = ['passed', 'pending', 'failed', 'not_available'];
@@ -443,7 +450,7 @@ define([
                                       create_button_save,
                                       ['code']);
         CellToolbar.register_callback('nbcelltesting.dropdown_menu',
-                                      dropdown_factory,
+                                      create_dropdown_menu,
                                       ['code']);
 
          var preset = [
