@@ -23,7 +23,7 @@
   ],
   "author": "Daniel Krenn <git@danielkrenn.at>",
   "contributors": [{"name": "Benjamin Hackl", "mail":"devel@benjamin-hackl.at"}],
-  "license": "BSD-2-Clause",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/dkrenn/jupyter-nbcelltesting/issues"
   },
