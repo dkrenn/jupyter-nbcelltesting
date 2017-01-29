@@ -77,7 +77,7 @@ define([
 
 
     var cell_output = function(cell) {
-        pre = cell.output_area.element.find('div.output_subarea').last().find('pre');
+        var pre = cell.output_area.element.find('div.output_subarea').last().find('pre');
         return pre.text();
     };
 
@@ -111,14 +111,13 @@ define([
     };
 
 
-    var edit_nbcelltesting_metadata = function(cell, celltoolbar=null) {
-        if (cell.metadata.nbcelltesting === undefined) {
-            metadata = {};
-        } else {
+    var edit_nbcelltesting_metadata = function(cell, celltoolbar) {
+        var metadata = {};
+        if (cell.metadata.nbcelltesting !== undefined) {
             metadata = cell.metadata.nbcelltesting;
         }
 
-        notebook = Jupyter.notebook
+        var notebook = Jupyter.notebook;
         dialog.edit_metadata({
             md: metadata,
             callback: function (md) {
@@ -137,6 +136,7 @@ define([
 
     var edit_desired_output = function(cell, celltoolbar=null) {
         var output = desired_output(cell);
+        if (output === null) { output = ''; }
         var notebook = Jupyter.notebook
         var error_div = $('<div/>').css('color', 'red');
         var message = 'Edit the desired output of the selected cell below.';
@@ -193,11 +193,11 @@ define([
 
 
     var compare_output = function(cell) {
-        dout = desired_output(cell);
+        var dout = desired_output(cell);
         if (dout === null) {
             return null;
         }
-        cout = cell_output(cell);
+        var cout = cell_output(cell);
         return cout === dout;
     };
 
@@ -352,11 +352,14 @@ define([
                    {name: 'break'},
                    {name: 'Edit Metadata', callback: on_edit_nbcelltesting_metadata}];
 
+
     var action_callback = function(action, cell, celltoolbar) {
         return function() { action.callback(cell, celltoolbar); }
     }
 
-    var dropdown_factory = function(div, cell, celltoolbar) {
+
+    var dropdown_factory = function(actions) {
+        return function(div, cell, celltoolbar) {
         var dropdownButton = $('<button/>').addClass('btn btn-default btn-xs dropdown-toggle')
             .prop('type', 'button').attr('data-toggle', 'dropdown')
             .html('<span class="caret"></span>');
@@ -374,7 +377,11 @@ define([
         }
 
         $(div).addClass('ctb-thing dropdown').append(dropdownButton).append(options);
+        };
     };
+
+
+    var create_dropdown_menu = dropdown_factory(actions);
 
 
     var global_status = ['passed', 'pending', 'failed', 'not_available'];
@@ -395,8 +402,14 @@ define([
 
 
     events.on('preset_activated.CellToolbar', function(event, preset) {
+        create_global_result(preset.name === preset_name);
+    });
+
+
+    var create_global_result = function(show) {
+        if (typeof show === 'undefined') { show = true; }
         var element = $('#nbcelltesting-global-result');
-        if (preset.name === preset_name) {
+        if (show) {
             if (element.length == 0) {
                 var progress = $('<div/>')
                     .attr('id', 'nbcelltesting-global-result')
@@ -417,7 +430,7 @@ define([
         } else {
             element.hide();
         }
-    });
+    };
 
 
     var load_css = function () {
@@ -439,7 +452,7 @@ define([
                                       create_button_save,
                                       ['code']);
         CellToolbar.register_callback('nbcelltesting.dropdown_menu',
-                                      dropdown_factory,
+                                      create_dropdown_menu,
                                       ['code']);
 
          var preset = [
@@ -453,6 +466,14 @@ define([
 
 
     return {
-        load_ipython_extension: load_extension
+        load_ipython_extension: load_extension,
+        load_css: load_css,
+        create_button: create_button,
+        create_global_result: create_global_result,
+        dropdown_factory: dropdown_factory,
+        on_reset_desired_output: on_reset_desired_output,
+        on_edit_desired_output: on_edit_desired_output,
+        on_test_output: on_test_output,
+        on_edit_nbcelltesting_metadata: on_edit_nbcelltesting_metadata
     };
 });
