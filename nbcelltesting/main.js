@@ -111,7 +111,7 @@ define([
     };
 
 
-    var edit_nbcelltesting_metadata = function(cell, celltoolbar=null) {
+    var edit_nbcelltesting_metadata = function(cell, celltoolbar) {
         var metadata = {};
         if (cell.metadata.nbcelltesting !== undefined) {
             metadata = cell.metadata.nbcelltesting;
