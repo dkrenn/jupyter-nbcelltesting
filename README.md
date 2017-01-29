@@ -6,6 +6,15 @@ An extension for testing whether the output of a cell in a Jupyter notebook has 
 
 ## Installation
 
+### Jumpstart
+
+```
+ $ sudo apt-get install npm
+ $ git clone https://github.com/dkrenn/jupyter-nbcelltesting.git
+ $ cd jupyter-nbcelltesting
+ $ PYFLAG=--user npm run install-nbcelltesting
+```
+
 ### From this repository
 
 After cloning this repository, the required JavaScript dependencies have to be
