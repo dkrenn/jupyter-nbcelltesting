@@ -1,0 +1,31 @@
+{
+  "name": "jupyter-nbcelltesting",
+  "version": "0.2.0",
+  "description": "An extension for the Jupyter notebook that tests and compares cell output against specified desired output.",
+  "dependencies": {
+    "diff": "^3.2.0"
+  },
+  "devDependencies": {},
+    "scripts": {
+      "install-nbcelltesting": "jupyter-nbextension install ./nbcelltesting $PYFLAG && jupyter-nbextension enable nbcelltesting/main $PYFLAG && jupyter-nbextension enable nbcelltesting/resources/diff.min $PYFLAG",
+      "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dkrenn/jupyter-nbcelltesting.git"
+  },
+  "keywords": [
+    "jupyter",
+    "notebook",
+    "extension",
+    "test",
+    "testing"
+  ],
+  "author": "Daniel Krenn <git@danielkrenn.at>",
+  "contributors": [{"name": "Benjamin Hackl", "mail":"devel@benjamin-hackl.at"}],
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/dkrenn/jupyter-nbcelltesting/issues"
+  },
+  "homepage": "https://github.com/dkrenn/jupyter-nbcelltesting#readme"
+}
