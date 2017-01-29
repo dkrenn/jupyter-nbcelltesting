@@ -406,7 +406,8 @@ define([
     });
 
 
-    var create_global_result = function(show=true) {
+    var create_global_result = function(show) {
+        if (typeof show === 'undefined') { show = true; }
         var element = $('#nbcelltesting-global-result');
         if (show) {
             if (element.length == 0) {
