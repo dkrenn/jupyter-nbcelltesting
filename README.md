@@ -12,6 +12,7 @@ An extension for testing whether the output of a cell in a Jupyter notebook has 
  $ sudo apt-get install npm
  $ git clone https://github.com/dkrenn/jupyter-nbcelltesting.git
  $ cd jupyter-nbcelltesting
+ $ npm install
  $ PYFLAG=--user npm run install-nbcelltesting
 ```
 
