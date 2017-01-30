@@ -203,8 +203,8 @@ define([
 
 
     var status = {'pending': {'text': '<span class="fa fa-spinner fa-spin"></span>',
-                              'style': 'info',
-                              'cls': 'label-info ct-status-pending',
+                              'style': 'warning',
+                              'cls': 'label-warning ct-status-pending',
                               'count': 0,
                               'title': 'Number of pending tests'},
                   'not_available': {'text': 'no output saved',
