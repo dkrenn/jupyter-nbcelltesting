@@ -389,11 +389,11 @@ define([
 
     var update_global_result = function() {
         var n = 0;
-        for (var s in status) {
+        for (var s of global_status) {
             status[s].count = $('.ct-status-' + s).length
             n += status[s].count;
         }
-        for (var s in status) {
+        for (var s of global_status) {
             $('#nbcelltesting-global-result-' + s)
                 .attr('style', 'width: ' + status[s].count / n * 100 + '%')
                 .html(status[s].count);
