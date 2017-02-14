@@ -222,14 +222,20 @@ define([
                              'cls': 'label-success ct-status-passed',
                              'count': 0,
                              'title': 'Number of cells with correct output'},
+                  'ignore': {'text': 'ignored',
+                             'style': 'default',
+                             'cls': 'label-default ct-status-ignore',
+                             'count': 0,
+                             'title': 'Number of cells ignored'},
                  };
 
 
     var test_output = function(cell) {
         prepare_data(cell);
         var result;
-        var cls;
-        if (cell.nbcelltesting_data.pending === true) {
+        if (cell.nbcelltesting_data.ignore === true) {
+            result = 'ignore';
+        } else if (cell.nbcelltesting_data.pending === true) {
             result = 'pending';
         } else {
             comparison_result = compare_output(cell);
@@ -300,6 +306,25 @@ define([
     };
 
 
+    var toggle_ignore = function(cell) {
+        prepare_data(cell);
+        if (cell.nbcelltesting_data.ignore === undefined) {
+            cell.nbcelltesting_data.ignore = true;
+        } else {
+            cell.nbcelltesting_data.ignore =
+                !cell.nbcelltesting_data.ignore;
+        }
+    };
+
+
+    var on_toggle_ignore = function(cell, celltoolbar) {
+        toggle_ignore(cell);
+        test_output(cell);
+        celltoolbar.rebuild();
+        update_global_result();
+    };
+
+
     var create_button = function(name, value, callback) {
         return function(div, cell, celltoolbar) {
             var button = $('<button/>').addClass('btn btn-default btn-xs')
@@ -350,6 +375,8 @@ define([
                    {name: 'Edit Output', callback: on_edit_desired_output},
                    {name: 'Test Output', callback: on_test_output},
                    {name: 'break'},
+                   {name: 'Toggle Ignore', callback: on_toggle_ignore},
+                   {name: 'break'},
                    {name: 'Edit Metadata', callback: on_edit_nbcelltesting_metadata}];
 
 
@@ -389,11 +416,11 @@ define([
 
     var update_global_result = function() {
         var n = 0;
-        for (var s in status) {
+        for (var s of global_status) {
             status[s].count = $('.ct-status-' + s).length
             n += status[s].count;
         }
-        for (var s in status) {
+        for (var s of global_status) {
             $('#nbcelltesting-global-result-' + s)
                 .attr('style', 'width: ' + status[s].count / n * 100 + '%')
                 .html(status[s].count);
